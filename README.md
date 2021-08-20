@@ -47,6 +47,14 @@ Results on CIFAR-10:
 ## Running
 You might use `CUDA_VISIBLE_DEVICES` to set proper number of GPUs.
 
+We released 3 models, please download from [cowtransfer](https://cowtransfer.com/s/7b3ee056bbd042) with code `461254`:
+```
+./logs
+|-- resnet50-ce-final/final             # SupCrossEntropy (Acc: 96.9)
+|-- resnet50-supcon-final/final         # SupContrast Pretrained
+|-- resnet50-linear-final/final         # SupContrast Linear Fine-tuned (Acc: 97.3)
+```
+
 **(0) Data Preparing**
 ```
 cd data
