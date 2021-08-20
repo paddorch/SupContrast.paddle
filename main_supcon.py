@@ -40,6 +40,8 @@ def main(cfg):
     callbacks = [LRSchedulerC(), VisualDLC(log_dir)]
 
     model.prepare(optim, loss=SupConLoss(temperature=cfg.COMMON.temp))
+
+    # load checkpoint
     if "continue_from" in cfg.COMMON:
         print("Restore checkpoint from", cfg.COMMON.continue_from)
         model.load(cfg.COMMON.continue_from)

@@ -1,0 +1,29 @@
+CLASSIFIER: 
+  name: resnet50
+  mode: linear
+  params:
+    num_classes: 10
+    only_fc: True  # only train the classifier
+COMMON:
+  test_only: False
+  workers: 4
+  batch_size: 128
+  epochs: 10
+  data_path: data/cifar-10-python.tar.gz
+  logdir: logs
+  save_freq: 10
+  verbose: 1
+  seed: 2021
+#  from_supcon: logs/resnet50-supcon-final/320
+  continue_from: logs/resnet50-linear-final/final
+OPTIMIZER:
+  name: momentum
+  params:
+    momentum: 0.9
+    weight_decay: 0.0001
+SCHEDULER:
+  name: cosine
+  warm_up_step: 100
+  params:
+    learning_rate: 0.3
+    T_max: 10

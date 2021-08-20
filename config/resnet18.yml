@@ -1,0 +1,27 @@
+CLASSIFIER: 
+  name: resnet18
+  mode: ce
+  params:
+    num_classes: 10
+COMMON:
+  test_only: False
+  workers: 4
+  batch_size: 128
+  epochs: 200
+  data_path: data/cifar-10-python.tar.gz
+  logdir: logs
+  save_freq: 20
+  verbose: 1
+  seed: 2021
+#  continue_from:
+OPTIMIZER:
+  name: momentum
+  params:
+    momentum: 0.9
+    weight_decay: 0.0001
+SCHEDULER:
+  name: cosine
+  warm_up_step: 2000
+  params:
+    learning_rate: 0.1
+    T_max: 300
