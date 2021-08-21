@@ -51,7 +51,7 @@ def build_transform():
         [transforms.RandomCrop(32, padding=4, fill=128),
          transforms.RandomHorizontalFlip(), CIFAR10Policy(),
          transforms.ToTensor(),
-         Cutout(n_holes=1, length=16),  # (https://github.com/uoguelph-mlrg/Cutout/blob/master/util/cutout.py)
+         # Cutout(n_holes=1, length=16),  # (https://github.com/uoguelph-mlrg/Cutout/blob/master/util/cutout.py)
          transforms.Normalize(cifar_mean, cifar_std)])
     # RandAugment
     # train_transforms = transforms.Compose([

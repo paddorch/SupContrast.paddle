@@ -38,11 +38,11 @@ Results on CIFAR-10:
 
 |          |Arch | Setting | Loss | Paper Acc(%) | Our Acc(%) | abs. improv. |
 |----------|:----:|:---:|:---:|:---:|:---:|:---:|
-|  SupCrossEntropy | ResNet50 | Supervised   | Cross Entropy |  95.0  | **96.9** (99.94*) | 1.9 |
-|  SupContrast     | ResNet50 | Supervised   | Contrastive   |  96.0  | **97.3** (99.95*) | 1.3 |
+|  SupCrossEntropy | ResNet50 | Supervised   | Cross Entropy |  95.0  | **96.9** <br> (-*)    | 1.9 |
+|  SupContrast     | ResNet50 | Supervised   | Contrastive   |  96.0  | **97.3** <br> (96.8*) | 1.3 |
 |  SimCLR          | ResNet50 | Unsupervised | Contrastive   |  93.6  |    -     |  -  |
 
-> *for Top5 Accuracy
+> *for no `cutout` Accuracy
 
 ## Running
 You might use `CUDA_VISIBLE_DEVICES` to set proper number of GPUs.

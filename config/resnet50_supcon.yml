@@ -5,7 +5,7 @@ CLASSIFIER:
   feat_dim: 128
 COMMON:
   workers: 4
-  batch_size: 128
+  batch_size: 384
   epochs: 300
   temp: 0.1
   data_path: data/cifar-10-python.tar.gz
@@ -13,7 +13,7 @@ COMMON:
   save_freq: 20
   verbose: 1
   seed: 2021
-  continue_from: logs/resnet50-supcon-final/final
+ continue_from: logs/resnet50-supcon-final/final
 OPTIMIZER:
   name: momentum
   params:
@@ -23,5 +23,5 @@ SCHEDULER:
   name: cosine
   warm_up_step: 2000
   params:
-    learning_rate: 0.03
+    learning_rate: 0.1
     T_max: 300
