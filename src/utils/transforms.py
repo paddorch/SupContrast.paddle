@@ -36,7 +36,7 @@ class RandomGrayscale(BaseTransform):
         Returns:
             PIL Image or Tensor: Randomly grayscaled image.
         """
-        if paddle.rand(1) < self.prob:
+        if paddle.rand([1]) < self.prob:
             return functional.to_grayscale(img, self.num_output_channels)
         return img
 
@@ -81,7 +81,7 @@ def build_transform():
     #     transforms.RandomResizedCrop(size=32, scale=(0.3, 1.)),
     #     transforms.RandomHorizontalFlip(),
     #     RandomApply(transforms.ColorJitter(0.4, 0.4, 0.4, 0.1), prob=0.8),
-        # RandomGrayscale(prob=0.2, num_output_channels=1),
+    #     RandomGrayscale(prob=0.2, num_output_channels=1),
     #     transforms.ToTensor(),
     #     transforms.Normalize(cifar_mean, cifar_std),
     # ])
