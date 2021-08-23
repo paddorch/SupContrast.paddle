@@ -1,39 +1,59 @@
+import paddle
 import numpy as np
-from paddle.vision.transforms import transforms
+from paddle.vision.transforms import functional, transforms, BaseTransform
 
 from .cutout import Cutout
 from .autoaugment import CIFAR10Policy
 
-# class ToArray(object):
-#     """Convert a ``PIL.Image`` to ``numpy.ndarray``.
-#     Converts a PIL.Image or numpy.ndarray (H x W x C) to a paddle.Tensor of shape (C x H x W).
-#     If input is a grayscale image (H x W), it will be converted to a image of shape (H x W x 1).
-#     And the shape of output tensor will be (1 x H x W).
-#     If you want to keep the shape of output tensor as (H x W x C), you can set data_format = ``HWC`` .
-#     Converts a PIL.Image or numpy.ndarray in the range [0, 255] to a paddle.Tensor in the
-#     range [0.0, 1.0] if the PIL Image belongs to one of the modes (L, LA, P, I, F, RGB, YCbCr,
-#     RGBA, CMYK, 1) or if the numpy.ndarray has dtype = np.uint8.
-#     In the other cases, tensors are returned without scaling.
-#     """
-#     def __call__(self, img):
-#         img = np.array(img)
-#         img = np.transpose(img, [2, 0, 1])
-#         img = img / 255.
-#         return img.astype('float32')
-#
-#
-# class RandomApply(object):
-#     """Random apply a transform"""
-#     def __init__(self, transform, p=0.5):
-#         super().__init__()
-#         self.p = p
-#         self.transform = transform
-#
-#     def __call__(self, img):
-#         if self.p < np.random.rand():
-#             return img
-#         img = self.transform(img)
-#         return img
+class RandomGrayscale(BaseTransform):
+    """Randomly convert image to grayscale with a probability of prob (default 0.1).
+    If the image is torch Tensor, it is expected
+    to have [..., 3, H, W] shape, where ... means an arbitrary number of leading dimensions
+
+    Args:
+        prob (float): probability that image should be converted to grayscale.
+        num_output_channels (int): (1 or 3) number of channels desired for output image
+        keys (list[str]|tuple[str], optional): Same as ``BaseTransform``. Default: None.
+
+    Returns:
+        PIL Image or Tensor: Grayscale version of the input image with probability p and unchanged
+        with probability (1-p).
+        - If input image is 1 channel: grayscale version is 1 channel
+        - If input image is 3 channel: grayscale version is 3 channel with r == g == b
+    """
+
+    def __init__(self, prob=0.1, num_output_channels=1, keys=None):
+        super().__init__()
+        super(RandomGrayscale, self).__init__(keys)
+        self.prob = prob
+        self.num_output_channels = num_output_channels
+
+    def _apply_image(self, img):
+        """
+        Args:
+            img (PIL Image or Tensor): Image to be converted to grayscale.
+
+        Returns:
+            PIL Image or Tensor: Randomly grayscaled image.
+        """
+        if paddle.rand(1) < self.prob:
+            return functional.to_grayscale(img, self.num_output_channels)
+        return img
+
+
+class RandomApply(object):
+    """Random apply a transform"""
+    def __init__(self, transform, prob=0.5):
+        super().__init__()
+        self.prob = prob
+        self.transform = transform
+
+    def __call__(self, img):
+        if self.prob < np.random.rand():
+            return img
+        img = self.transform(img)
+        return img
+
 
 class TwoCropTransform:
     """Create two crops of the same image"""
@@ -43,9 +63,11 @@ class TwoCropTransform:
     def __call__(self, x):
         return [self.transform(x), self.transform(x)]
 
+
 def build_transform():
     cifar_mean = [0.4914, 0.4822, 0.4465]
     cifar_std = [0.247, 0.243, 0.261]
+
     # AutoAugment
     train_transforms = transforms.Compose(
         [transforms.RandomCrop(32, padding=4, fill=128),
@@ -53,23 +75,17 @@ def build_transform():
          transforms.ToTensor(),
          # Cutout(n_holes=1, length=16),  # (https://github.com/uoguelph-mlrg/Cutout/blob/master/util/cutout.py)
          transforms.Normalize(cifar_mean, cifar_std)])
+
     # RandAugment
     # train_transforms = transforms.Compose([
     #     transforms.RandomResizedCrop(size=32, scale=(0.3, 1.)),
-    #     RandomApply(
-    #         transforms.ContrastTransform(0.1),
-    #     ),
-    #     RandomApply(
-    #         transforms.ColorJitter(0.4, 0.4, 0.4, 0.1)
-    #     , p=0.8),
-    #     RandomApply(
-    #         transforms.BrightnessTransform(0.1),
-    #     ),
     #     transforms.RandomHorizontalFlip(),
-    #     transforms.RandomRotation(15),
-    #     ToArray(),
+    #     RandomApply(transforms.ColorJitter(0.4, 0.4, 0.4, 0.1), prob=0.8),
+        # RandomGrayscale(prob=0.2, num_output_channels=1),
+    #     transforms.ToTensor(),
     #     transforms.Normalize(cifar_mean, cifar_std),
     # ])
+
     test_transforms = transforms.Compose(
         [transforms.ToTensor(),
          transforms.Normalize(cifar_mean, cifar_std)])

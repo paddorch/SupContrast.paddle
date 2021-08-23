@@ -109,14 +109,15 @@ class SupConLoss(nn.Layer):
         logits = anchor_dot_contrast - logits_max.detach()
 
         # tile mask (bsz, bsz) -> (anchor_count * bsz, contrast_count * bsz)
-        # ugly code because PaddlePaddle 2.1.x not support expand / repeat :(
-        # mask = paddle.expand(mask, (anchor_count * batch_size, contrast_count * batch_size))  # not work
+        mask = mask.tile((anchor_count, contrast_count))
+        """ old version
         _mask = mask
         for _ in range(anchor_count - 1):
             mask = paddle.concat([mask, _mask], axis=0)
         _mask = mask
         for _ in range(contrast_count - 1):
             mask = paddle.concat([mask, _mask], axis=1)
+        """
 
         # mask-out self-contrast cases
         logits_mask = paddle.ones_like(mask) - paddle.eye(anchor_count * batch_size, contrast_count * batch_size)
