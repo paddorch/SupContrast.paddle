@@ -91,14 +91,14 @@ Linear evaluation stage:
 config the `from_supcon` in `config/resnet50_linear.yml` to specify the checkpoint path, then run:
 
 ```
-python main_ce.py -y config/restnet50_linear.yml
+python main_ce.py -y config/resnet50_linear.yml
 ```
 
 - Test:
 
 config the `continue_from` in `config/resnet50_linear.yml` to specify the checkpoint path, then run:
 ```
-python main_ce.py -y config/restnet50_linear.yml --test
+python main_ce.py -y config/resnet50_linear.yml --test
 ```
 
 you will get:
